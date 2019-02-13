@@ -1,7 +1,11 @@
 var express = require('express');
-var app = express();
+var cors = require('cors');
 var AWS = require('aws-sdk');
+
+var app = express();
 var s3 = new AWS.S3();
+
+app.use(cors());
 
 app.get('/', function(req, res) {
    res.send('Welcome to Spooterfy')
