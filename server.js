@@ -19,7 +19,7 @@ app.get('/music', function(req, res) {
       var response = {
          statusCode: 200,
          body: {
-            artists: data.Contents
+            records: data.Contents
          }
       }
       return res.send(response);
