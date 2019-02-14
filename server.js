@@ -11,16 +11,15 @@ app.get('/', function(req, res) {
    res.send('Welcome to Spooterfy')
 });
 
-app.get('/songs', function(req, res) {
+app.get('/music', function(req, res) {
    s3.listObjects({
-     Bucket: 'testy-tester-351541531532',
-     Delimiter: '/'
+     Bucket: 'testy-tester-351541531532'
    }, function(err, data) {
       if (err) return res.status(400).send({ message: err.message });
       var response = {
          statusCode: 200,
          body: {
-            artists: data.CommonPrefixes
+            artists: data.Contents
          }
       }
       return res.send(response);
