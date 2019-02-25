@@ -29,7 +29,7 @@ app.get('/music', function(req, res) {
 
 app.get('/genres', function(req, res) {
    db.scan({
-      TableName: 'music',
+      TableName: 'music2',
    }, function(err, data) {
       console.log(err, data)
       if (err) return res.status(400).send({ message: err.message });
@@ -45,7 +45,7 @@ app.get('/genres', function(req, res) {
 
 app.get('/artists/for/genre', function(req, res) {
    db.query({
-      TableName: 'music',
+      TableName: 'music2',
       KeyConditionExpression: 'genre = :genre',
       ExpressionAttributeValues: {
          ':genre': {
