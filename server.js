@@ -3,6 +3,7 @@ var cors = require('cors');
 var AWS = require('aws-sdk');
 
 var app = express();
+var db = new AWS.DynamoDB();
 var s3 = new AWS.S3();
 
 app.use(cors());
@@ -22,6 +23,43 @@ app.get('/music', function(req, res) {
             records: data.Contents
          }
       }
+      return res.send(response);
+   });
+});
+
+app.get('/genres', function(req, res) {
+   db.scan({
+      TableName: 'music',
+   }, function(err, data) {
+      console.log(err, data)
+      if (err) return res.status(400).send({ message: err.message });
+      var response = {
+         statusCode: 200,
+         body: {
+            records: data
+         }
+      };
+      return res.send(response);
+   });
+});
+
+app.get('/artists/for/genre', function(req, res) {
+   db.query({
+      TableName: 'music',
+      KeyConditionExpression: 'genre = :genre',
+      ExpressionAttributeValues: {
+         ':genre': {
+            S: req.query.genre
+         }
+      }
+   }, function(err, data) {
+      if (err) return res.status(400).send({ message: err.message });
+      var response = {
+         statusCode: 200,
+         body: {
+            records: data
+         }
+      };
       return res.send(response);
    });
 });
