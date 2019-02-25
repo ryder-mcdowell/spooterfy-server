@@ -122,6 +122,31 @@ app.get('/songs/for/album', function(req, res) {
    });
 });
 
+app.get('/song', function(req, res) {
+   db.query({
+      TableName: 'music',
+      IndexName: 'song-index',
+      KeyConditionExpression: 'song = :song',
+      ExpressionAttributeValues: {
+         ':song': {
+            S: req.query.song
+         }
+      }
+   }, function(err, data) {
+      if (err) return res.status(400).send({ message: err.message });
+
+      let songURL = data.Items && data.Items.length > 0 ? data.Items[0].url.S : null;
+
+      var response = {
+         statusCode: 200,
+         body: {
+            records: songURL
+         }
+      };
+      return res.send(response);
+   });
+});
+
 var server = app.listen(8081, function() {
    var host = server.address().address
    var port = server.address().port
