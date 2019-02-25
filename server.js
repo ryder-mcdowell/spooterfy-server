@@ -29,14 +29,17 @@ app.get('/music', function(req, res) {
 
 app.get('/genres', function(req, res) {
    db.scan({
-      TableName: 'music2',
+      TableName: 'music',
    }, function(err, data) {
-      console.log(err, data)
       if (err) return res.status(400).send({ message: err.message });
+
+      let allGenreItems = data.Items.map(item => item.genre.S);
+      let genres = [ ...new Set(allGenreItems)];
+
       var response = {
          statusCode: 200,
          body: {
-            records: data
+            records: genres
          }
       };
       return res.send(response);
@@ -45,7 +48,7 @@ app.get('/genres', function(req, res) {
 
 app.get('/artists/for/genre', function(req, res) {
    db.query({
-      TableName: 'music2',
+      TableName: 'music',
       KeyConditionExpression: 'genre = :genre',
       ExpressionAttributeValues: {
          ':genre': {
