@@ -97,6 +97,31 @@ app.get('/albums/for/artist', function(req, res) {
    });
 });
 
+app.get('/songs/for/album', function(req, res) {
+   db.query({
+      TableName: 'music',
+      IndexName: 'album-index',
+      KeyConditionExpression: 'album = :album',
+      ExpressionAttributeValues: {
+         ':album': {
+            S: req.query.album
+         }
+      }
+   }, function(err, data) {
+      if (err) return res.status(400).send({ message: err.message });
+
+      let songs = data.Items.map(item => item.song.S);
+
+      var response = {
+         statusCode: 200,
+         body: {
+            records: songs
+         }
+      };
+      return res.send(response);
+   });
+});
+
 var server = app.listen(8081, function() {
    var host = server.address().address
    var port = server.address().port
