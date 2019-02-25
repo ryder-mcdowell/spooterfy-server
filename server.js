@@ -34,7 +34,7 @@ app.get('/genres', function(req, res) {
       if (err) return res.status(400).send({ message: err.message });
 
       let allGenreItems = data.Items.map(item => item.genre.S);
-      let genres = [ ...new Set(allGenreItems)];
+      let genres = [...new Set(allGenreItems)];
 
       var response = {
          statusCode: 200,
@@ -57,15 +57,21 @@ app.get('/artists/for/genre', function(req, res) {
       }
    }, function(err, data) {
       if (err) return res.status(400).send({ message: err.message });
+
+      let allArtistItems = data.Items.map(item => item.artist.S);
+      let artists = [...new Set(allArtistItems)];
+
       var response = {
          statusCode: 200,
          body: {
-            records: data
+            records: artists
          }
       };
       return res.send(response);
    });
 });
+
+
 
 var server = app.listen(8081, function() {
    var host = server.address().address
