@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var cors = require('cors');
 var AWS = require('aws-sdk');
 AWS.config.update({ region:'us-east-1' });
@@ -7,6 +8,8 @@ var app = express();
 var db = new AWS.DynamoDB();
 
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.get('/', function(req, res) {
    res.send('Welcome to Spooterfy')
@@ -130,6 +133,58 @@ app.get('/song', function(req, res) {
       };
       return res.send(response);
    });
+});
+
+app.post('/save-user', function(req, res) {
+   db.putItem({
+      TableName: 'users',
+      Item: {
+         "id": {
+            S: req.body.id
+         },
+         "name": {
+            S: req.body.name
+         },
+         "email": {
+            S: req.body.email
+         }
+      }
+   }, function(err, data) {
+      if (err) return res.status(400).send({ message: err.message });
+
+      var response = {
+         statusCode: 200,
+         body: {
+            message: 'success'
+         }
+      };
+      return res.send(response);
+   });
+});
+
+app.get('/user', function(req, res) {
+   db.getItem({
+      TableName: 'users',
+      Key: {
+         "id": {
+            S: req.query.id
+         }
+      }
+   }, function(err, data) {
+      console.log(err)
+      if (err) return res.status(400).send({ message: err.message });
+
+      console.log(data)
+      let user = data
+
+      var response = {
+         statusCode: 200,
+         body: {
+            user: user
+         }
+      };
+      return res.send(response);
+   })
 });
 
 var server = app.listen(8081, function() {
