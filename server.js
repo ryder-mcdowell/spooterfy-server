@@ -6,6 +6,7 @@ AWS.config.update({ region:'us-east-1' });
 
 var app = express();
 var db = new AWS.DynamoDB();
+var sqs = new AWS.SQS();
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -183,6 +184,25 @@ app.get('/user', function(req, res) {
             user: user
          }
       };
+      return res.send(response);
+   })
+});
+
+app.post('/play', function(req, res) {
+   var body = {
+      artist: req.body.artist,
+      album: req.body.album,
+      song: req.body.song
+   };
+   sqs.sendMessage({
+      QueueUrl: 'https://sqs.us-east-1.amazonaws.com/526935631633/reporting',
+      MessageBody: JSON.stringify(body),
+   }, function(err, data) {
+      if (err) return res.status(400).send({ message: err.message });
+
+      var response = {
+         statusCode: 200
+      }
       return res.send(response);
    })
 });
