@@ -195,7 +195,7 @@ app.post('/play', function(req, res) {
       song: req.body.song
    };
    sqs.sendMessage({
-      QueueUrl: 'https://sqs.us-east-1.amazonaws.com/526935631633/reporting',
+      QueueUrl: 'https://sqs.us-east-1.amazonaws.com/526935631633/Spooterfy',
       MessageBody: JSON.stringify(body),
    }, function(err, data) {
       if (err) return res.status(400).send({ message: err.message });
